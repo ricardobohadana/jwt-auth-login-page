@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { API_URL } from "../../../pages/_app";
+import { setCookie } from "../../Helpers/cookies";
 
 export const Login = () => {
   const router = useRouter();
@@ -15,18 +16,6 @@ export const Login = () => {
   const setError = (data: string) => {
     setUsernameError(data);
     data === "" ? setUsernameException(false) : setUsernameException(true);
-  };
-
-  const setLocalStorage = ({
-    username,
-    password,
-    accessToken,
-    refreshToken,
-  }) => {
-    localStorage.setItem("username", username);
-    localStorage.setItem("password", password);
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
   };
 
   const resetRegisterData = () => {
@@ -56,7 +45,9 @@ export const Login = () => {
         return resp.data;
       })
       .then((data) => {
-        setLocalStorage(data);
+        Object.entries(data).map(([key, value]) => {
+          setCookie(key, value as string, 0.01);
+        });
         router.push("/users");
       })
       .catch((err) => {

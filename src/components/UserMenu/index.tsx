@@ -1,8 +1,11 @@
+import axios from "axios";
 import React from "react";
+import { API_URL } from "../../../pages/_app";
+import { deleteCookie, setCookie } from "../../Helpers/cookies";
 interface UserMenuProps {
   username: string;
-  encryptedPassword: string;
-  accesstoken: string;
+  password: string;
+  accessToken: string;
   refreshToken: string;
 }
 
@@ -33,24 +36,34 @@ const userMenuData = [
 export const UserMenu = (props: UserMenuProps) => {
   const signOutUser = () => {
     // falta o axios de logout
+    axios.get(API_URL + "/logout", {
+      headers: {
+        Authorization: `Bearer ${props.accessToken}`,
+        Authentication: `Bearer ${props.refreshToken}`,
+      },
+    });
 
-    localStorage.removeItem("username");
-    localStorage.removeItem("password");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    Object.entries(props).map(([key, value]) => {
+      deleteCookie(key);
+    });
   };
 
   return (
     <div className="my-10">
       <div className="bg-white rounded overflow-hidden shadow-lg">
-        <div className="text-center p-6  border-b">
+        <div className="text-center p-6  border-b max-w-xs">
           <img
             className="h-24 w-24 rounded-full mx-auto"
             src="/avatar.svg"
             alt="Randy Robertson"
           />
           <p className="pt-2 text-lg font-semibold">{props.username}</p>
-          <p className="text-sm text-gray-600">{props.encryptedPassword}</p>
+          <p
+            className="text-sm text-gray-600"
+            style={{ wordWrap: "break-word" }}
+          >
+            {props.password}
+          </p>
           <div className="mt-5">
             <a
               href="#"
@@ -105,7 +118,7 @@ export const UserMenu = (props: UserMenuProps) => {
                 className="text-xs text-gray-500 max-w-xs"
                 style={{ wordWrap: "break-word" }}
               >
-                {props.accesstoken}
+                {props.accessToken}
               </p>
             </div>
           </a>

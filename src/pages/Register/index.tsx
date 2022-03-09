@@ -4,6 +4,7 @@ import { useState } from "react";
 import { API_URL } from "../../../pages/_app";
 import { LoadingSpinner } from "../../components/Spinners";
 import { useRouter } from "next/router";
+import { setCookie } from "../../Helpers/cookies";
 
 export const Register = () => {
   const router = useRouter();
@@ -16,18 +17,6 @@ export const Register = () => {
   const setError = (data: string) => {
     setUsernameError(data);
     data === "" ? setUsernameException(false) : setUsernameException(true);
-  };
-
-  const setLocalStorage = ({
-    username,
-    password,
-    accessToken,
-    refreshToken,
-  }) => {
-    localStorage.setItem("username", username);
-    localStorage.setItem("password", password);
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
   };
 
   const resetRegisterData = () => {
@@ -57,7 +46,9 @@ export const Register = () => {
         return resp.data;
       })
       .then((data) => {
-        setLocalStorage(data);
+        Object.entries(data).map(([key, value]) => {
+          setCookie(key, value as string, 0.01);
+        });
         router.push("/users");
       })
       .catch((err) => {

@@ -1,13 +1,15 @@
-export const UserLists = () => {
+import { IUsers } from "../../pages/UserPage";
+
+export const UserLists = (props: IUsers) => {
   return (
     <tbody className="bg-white divide-y divide-gray-300">
       <tr className="whitespace-nowrap">
-        <td className="px-6 py-4 text-sm text-gray-500">1</td>
+        <td className="px-6 py-4 text-sm text-gray-500">{props.id}</td>
         <td className="px-6 py-4">
-          <div className="text-sm text-gray-900">Jon doe</div>
+          <div className="text-sm text-gray-900">{props.username}</div>
         </td>
         <td className="px-6 py-4">
-          <div className="text-sm text-gray-500">jhondoe@example.com</div>
+          <div className="text-sm text-gray-500">{props.username}</div>
         </td>
         <td className="px-6 py-4">
           <a href="#">
