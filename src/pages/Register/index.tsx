@@ -1,6 +1,73 @@
+import axios from "axios";
 import Link from "next/link";
+import { useState } from "react";
+import { API_URL } from "../../../pages/_app";
+import { LoadingSpinner } from "../../components/Spinners";
+import { useRouter } from "next/router";
 
 export const Register = () => {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [usernameException, setUsernameException] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+
+  const setError = (data: string) => {
+    setUsernameError(data);
+    data === "" ? setUsernameException(false) : setUsernameException(true);
+  };
+
+  const setLocalStorage = ({
+    username,
+    password,
+    accessToken,
+    refreshToken,
+  }) => {
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+  };
+
+  const resetRegisterData = () => {
+    setUsername("");
+    setPassword("");
+  };
+
+  const checkIfEmpty = () => {
+    return username && password;
+  };
+
+  function signUpUser() {
+    setError("");
+    if (!checkIfEmpty()) {
+      setError("Username or password cannot be empty");
+      return;
+    }
+    setIsLoading(true);
+    axios
+      .post(API_URL + "/signup", {
+        username: username,
+        password: password,
+      })
+      .then((resp) => {
+        setIsLoading(false);
+        console.log(resp.data);
+        return resp.data;
+      })
+      .then((data) => {
+        setLocalStorage(data);
+        router.push("/users");
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.error(err.response.data.error);
+        setError(err.response.data.error);
+      });
+    resetRegisterData();
+  }
+
   return (
     <>
       <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 ">
@@ -29,9 +96,16 @@ export const Register = () => {
             </div>
             <input
               className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-              type=""
+              type="text"
               placeholder="Cadastre seu nome de usuário"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
             />
+            {usernameException ? (
+              <div className="font-medium text-red-600">{usernameError}</div>
+            ) : (
+              <></>
+            )}
           </div>
           <div className="mt-8">
             <div className="flex justify-between items-center">
@@ -51,16 +125,25 @@ export const Register = () => {
               className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
               type="password"
               placeholder="Cadastre sua senha"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
           </div>
+
           <div className="mt-10">
-            <button
-              className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
-                                font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
-                                shadow-lg"
-            >
-              Cadastrar
-            </button>
+            {isLoading ? (
+              <div className="flex justify-center  mr-10">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <button
+                disabled={isLoading}
+                className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600 shadow-lg"
+                onClick={(e) => signUpUser()}
+              >
+                Cadastrar
+              </button>
+            )}
           </div>
         </div>
       </div>
