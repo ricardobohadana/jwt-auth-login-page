@@ -1,5 +1,5 @@
 // import styled from "styled-components";
-import { Login } from "../src/pages/Login";
+import { Register } from "../src/pages/Register";
 
 // const Title = styled.h1`
 //   font-size: 50px;
@@ -7,5 +7,5 @@ import { Login } from "../src/pages/Login";
 // `;
 
 export default function Home() {
-  return <Login />;
+  return <Register />;
 }
