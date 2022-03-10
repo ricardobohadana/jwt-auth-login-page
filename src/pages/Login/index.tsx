@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { API_URL } from "../../../pages/_app";
+import { LoadingSpinner } from "../../components/Spinners";
 import { setCookie } from "../../Helpers/cookies";
 
 export const Login = () => {
@@ -97,14 +98,6 @@ export const Login = () => {
               <div className="text-sm font-bold text-gray-700 tracking-wide">
                 Senha
               </div>
-              {/* <div>
-                <a
-                  className="text-xs font-display font-semibold text-indigo-600 hover:text-indigo-800
-                                        cursor-pointer"
-                >
-                  Forgot Password?
-                </a>
-              </div> */}
             </div>
             <input
               className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
@@ -121,14 +114,19 @@ export const Login = () => {
             )}
           </div>
           <div className="mt-10">
-            <button
-              className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
-                                font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
-                                shadow-lg"
-              onClick={(e) => signInUser()}
-            >
-              Entrar
-            </button>
+            {isLoading ? (
+              <div className="flex justify-center  mr-10">
+                <LoadingSpinner />
+              </div>
+            ) : (
+              <button
+                disabled={isLoading}
+                className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600 shadow-lg"
+                onClick={(e) => signInUser()}
+              >
+                Cadastrar
+              </button>
+            )}
           </div>
         </div>
       </div>
