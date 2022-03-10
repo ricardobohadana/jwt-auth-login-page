@@ -46,7 +46,7 @@ export const Login = () => {
       })
       .then((data) => {
         Object.entries(data).map(([key, value]) => {
-          setCookie(key, value as string, 0.01);
+          setCookie(key, value as string);
         });
         router.push("/users");
       })
@@ -111,6 +111,7 @@ export const Login = () => {
               placeholder="Digite sua senha"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
+              onKeyPress={(e) => e.key == "Enter" && signInUser()}
             />
             {usernameException ? (
               <div className="font-medium text-red-600">{usernameError}</div>

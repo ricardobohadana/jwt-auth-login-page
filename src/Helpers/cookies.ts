@@ -1,10 +1,7 @@
-export function setCookie(
-  cookieName: string,
-  cookieValue: string,
-  expirationTimeDelta: number
-): void {
+export function setCookie(cookieName: string, cookieValue: string): void {
   const d = new Date();
-  d.setTime(d.getTime() + expirationTimeDelta * 24 * 60 * 60 * 1000);
+  const expirationTimeDelta = 10;
+  d.setTime(d.getTime() + expirationTimeDelta * 60 * 1000);
   let expires = "expires=" + d.toUTCString();
   document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
 }

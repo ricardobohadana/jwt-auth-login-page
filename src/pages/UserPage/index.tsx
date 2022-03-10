@@ -1,9 +1,10 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../../pages/_app";
 import { UserMenu } from "../../components/UserMenu";
 import { UserLists } from "../../components/UsersList";
-import { getCookie } from "../../Helpers/cookies";
+import { checkCookie, getCookie } from "../../Helpers/cookies";
 
 export interface IUsers {
   id: string;
@@ -12,6 +13,7 @@ export interface IUsers {
 }
 
 export const UserPage = () => {
+  const router = useRouter();
   const [users, setUsers] = useState<IUsers[]>([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +21,12 @@ export const UserPage = () => {
   const [refreshToken, setRefreshToken] = useState("");
 
   useEffect(() => {
+    if (!checkCookie("accessToken") || !checkCookie("refreshToken")) {
+      // cookies expiraram, redirecionar para login
+      router.push("/");
+      return;
+    }
+
     const Username = getCookie("username");
     const Password = getCookie("password");
     const AccessToken = getCookie("accessToken");
@@ -28,6 +36,7 @@ export const UserPage = () => {
     setAccessToken(AccessToken);
     setRefreshToken(RefreshToken);
 
+    // requisitando os dados do usuário
     axios
       .get(API_URL + "/users", {
         headers: {
@@ -43,14 +52,14 @@ export const UserPage = () => {
   }, []);
 
   return (
-    <div className="flex max-w-screen-xl mx-auto justify-around">
+    <div className="flex justify-evenly">
       <UserMenu
         username={username}
         password={password}
         accessToken={accessToken}
         refreshToken={refreshToken}
       />
-      <div className="max-w-screen-lg items-center m-auto h-screen mt-10">
+      <div className="max-w-screen-md mt-10">
         <div className="container flex justify-center mx-auto h-full">
           <div className="flex flex-col">
             <div className="w-full">

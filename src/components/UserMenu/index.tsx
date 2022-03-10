@@ -1,7 +1,8 @@
 import axios from "axios";
+import { useRouter } from "next/router";
 import React from "react";
 import { API_URL } from "../../../pages/_app";
-import { deleteCookie, setCookie } from "../../Helpers/cookies";
+import { deleteCookie, checkCookie } from "../../Helpers/cookies";
 interface UserMenuProps {
   username: string;
   password: string;
@@ -34,18 +35,31 @@ const userMenuData = [
   },
 ];
 export const UserMenu = (props: UserMenuProps) => {
+  const router = useRouter();
   const signOutUser = () => {
-    // falta o axios de logout
-    axios.get(API_URL + "/logout", {
-      headers: {
-        Authorization: `Bearer ${props.accessToken}`,
-        Authentication: `Bearer ${props.refreshToken}`,
-      },
-    });
+    // caso não tenha os dois tokens nos cookies
+    if (!checkCookie("refreshToken") || !checkCookie("accessToken")) {
+      router.push("/");
+      return;
+    }
 
-    Object.entries(props).map(([key, value]) => {
-      deleteCookie(key);
-    });
+    // falta o axios de logout
+    axios
+      .get(API_URL + "/logout", {
+        headers: {
+          Authorization: `Bearer ${props.accessToken}`,
+          Authentication: `Refresh ${props.refreshToken}`,
+        },
+      })
+      .then((resp) => {
+        deleteCookie("username");
+        deleteCookie("password");
+        deleteCookie("accessToken");
+        deleteCookie("refreshToken");
+        return resp;
+      })
+      .then((resp) => resp.status === 200 && router.push("/"))
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -59,19 +73,18 @@ export const UserMenu = (props: UserMenuProps) => {
           />
           <p className="pt-2 text-lg font-semibold">{props.username}</p>
           <p
-            className="text-sm text-gray-600"
+            className="text-xs text-gray-600 mt-2"
             style={{ wordWrap: "break-word" }}
           >
             {props.password}
           </p>
           <div className="mt-5">
-            <a
-              href="#"
+            <button
               className="border rounded-full py-2 px-4 text-xs font-semibold text-gray-700"
               onClick={(e) => signOutUser()}
             >
               Encerrar sessão
-            </a>
+            </button>
           </div>
         </div>
         <div className="border-b">

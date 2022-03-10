@@ -47,7 +47,7 @@ export const Register = () => {
       })
       .then((data) => {
         Object.entries(data).map(([key, value]) => {
-          setCookie(key, value as string, 0.01);
+          setCookie(key, value as string);
         });
         router.push("/users");
       })
@@ -118,6 +118,7 @@ export const Register = () => {
               placeholder="Cadastre sua senha"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
+              onKeyPress={(e) => e.key == "Enter" && signUpUser()}
             />
           </div>
 
