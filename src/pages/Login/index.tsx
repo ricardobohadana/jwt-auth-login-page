@@ -40,7 +40,6 @@ export const Login = () => {
         password: password,
       })
       .then((resp) => {
-        setIsLoading(false);
         console.log(resp.data);
         return resp.data;
       })
@@ -48,14 +47,16 @@ export const Login = () => {
         Object.entries(data).map(([key, value]) => {
           setCookie(key, value as string);
         });
+        resetRegisterData();
+        setIsLoading(false);
         router.push("/users");
       })
       .catch((err) => {
         setIsLoading(false);
         console.error(err.response.data.error);
         setError(err.response.data.error);
+        resetRegisterData();
       });
-    resetRegisterData();
   }
   return (
     <>
