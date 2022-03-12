@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { API_URL } from "../../../pages/_app";
 import { UserMenu } from "../../components/UserMenu";
-import { UserLists } from "../../components/UsersList";
+import { UserList } from "../../components/UsersList";
 import { checkCookie, getCookie } from "../../Helpers/cookies";
+import createHeaderWithTokens from "../../Helpers/createHeaders";
 
 export interface IUsers {
   id: string;
@@ -19,6 +20,22 @@ export const UserPage = () => {
   const [password, setPassword] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
+
+  const removeUserFromList = (id: string) => {
+    setUsers((prevState) => prevState.filter((prevItem) => prevItem.id !== id));
+    const payload = {
+      id: id,
+    };
+    axios
+      .post(API_URL + "/delete", payload, {
+        headers: createHeaderWithTokens(accessToken, refreshToken),
+      })
+      .then((resp) => {
+        console.log(resp.status);
+        console.log(resp.data);
+      })
+      .catch((err) => console.error(err.response.data.error));
+  };
 
   useEffect(() => {
     if (!checkCookie("accessToken") || !checkCookie("refreshToken")) {
@@ -83,9 +100,11 @@ export const UserPage = () => {
                     </tr>
                   </thead>
                   {users.length > 0 ? (
-                    users.map((user) => {
+                    users.map((user, index) => {
                       return (
-                        <UserLists
+                        <UserList
+                          parentDeleteSelectedUser={removeUserFromList}
+                          key={index}
                           username={user.username}
                           id={user.id}
                           password={user.password}

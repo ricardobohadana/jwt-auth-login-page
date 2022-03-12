@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { API_URL } from "../../../pages/_app";
 import { deleteCookie, checkCookie } from "../../Helpers/cookies";
+import createHeaderWithTokens from "../../Helpers/createHeaders";
 interface UserMenuProps {
   username: string;
   password: string;
@@ -46,10 +47,7 @@ export const UserMenu = (props: UserMenuProps) => {
     // falta o axios de logout
     axios
       .get(API_URL + "/logout", {
-        headers: {
-          Authorization: `Bearer ${props.accessToken}`,
-          Authentication: `Refresh ${props.refreshToken}`,
-        },
+        headers: createHeaderWithTokens(props.accessToken, props.refreshToken),
       })
       .then((resp) => {
         deleteCookie("username");
