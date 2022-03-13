@@ -1,10 +1,10 @@
 import axios from "axios";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../../../pages/_app";
 import { LoadingSpinner } from "../../components/Spinners";
 import { useRouter } from "next/router";
-import { setCookie } from "../../Helpers/cookies";
+import { checkCookie, setCookie } from "../../Helpers/cookies";
 
 export const Register = () => {
   const router = useRouter();
@@ -13,6 +13,14 @@ export const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [usernameException, setUsernameException] = useState(false);
   const [usernameError, setUsernameError] = useState("");
+
+  useEffect(() => {
+    if (checkCookie("accessToken") && checkCookie("refreshToken")) {
+      // cookies existem, redirecionar para /users
+      router.push("/users");
+      return;
+    }
+  }, []);
 
   const setError = (data: string) => {
     setUsernameError(data);
