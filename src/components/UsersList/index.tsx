@@ -7,7 +7,7 @@ import { IUsers } from "../../pages/UserPage";
 
 interface IUserListProps extends IUsers {
   key: number;
-  parentDeleteSelectedUser: (id: string) => void;
+  parentDeleteSelectedUser: (id: string, username: string) => void;
 }
 
 // implementar modal do seguinte link:
@@ -18,7 +18,7 @@ export const UserList = (props: IUserListProps) => {
   const refreshToken = getCookie("refreshToken");
 
   const deleteSelectedUser = () => {
-    props.parentDeleteSelectedUser(props.id);
+    props.parentDeleteSelectedUser(props.id, props.username);
   };
   const updateSelectedUser = () => {
     return;

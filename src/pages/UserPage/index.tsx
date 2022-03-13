@@ -21,7 +21,11 @@ export const UserPage = () => {
   const [accessToken, setAccessToken] = useState("");
   const [refreshToken, setRefreshToken] = useState("");
 
-  const removeUserFromList = (id: string) => {
+  const removeUserFromList = (id: string, listUsername: string) => {
+    if (listUsername === username) {
+      console.error("Você não pode excluir a própria conta");
+      return;
+    }
     setUsers((prevState) => prevState.filter((prevItem) => prevItem.id !== id));
     const payload = {
       id: id,
